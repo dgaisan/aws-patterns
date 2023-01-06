@@ -1,0 +1,59 @@
+{
+    "Comment": "A description of my state machine",
+    "StartAt": "Get Document Metadata",
+    "States": {
+      "Get Document Metadata": {
+        "Type": "Task",
+        "Resource": "${GetDocumentMetadataFunctionArn}",
+        "Next": "StartDocumentTextDetection"
+      },
+      "StartDocumentTextDetection": {
+        "Type": "Task",
+        "Parameters": {
+          "DocumentLocation": {
+            "S3Object": {
+              "Bucket.$": "$.file.bucket",
+              "Name.$": "$.file.key"
+            }
+          }
+        },
+        "Resource": "arn:aws:states:::aws-sdk:textract:startDocumentTextDetection",
+        "Next": "Wait",
+        "ResultPath": "$.textDetection"
+      },
+      "Wait": {
+        "Type": "Wait",
+        "Seconds": 30,
+        "Next": "Get Text Detection Results"
+      },
+      "Get Text Detection Results": {
+        "Type": "Task",
+        "Resource": "${GetTextDetectionResultsFunctionArn}",
+        "Next": "Is Text Detection Completed"
+      },
+      "Is Text Detection Completed": {
+        "Type": "Choice",
+        "Choices": [
+          {
+            "And": [
+              {
+                "Variable": "$.textDetection.jobStatus",
+                "IsPresent": true
+              },
+              {
+                "Variable": "$.textDetection.jobStatus",
+                "StringEquals": "SUCCEEDED"
+              }
+            ],
+            "Next": "Insert Into DB"
+          }
+        ],
+        "Default": "Wait"
+      },
+      "Insert Into DB": {
+        "Type": "Task",
+        "Resource": "${InsertDocumentFunctionArn}",
+        "End": true
+      }
+    }
+}
