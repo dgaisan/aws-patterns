@@ -54,6 +54,3 @@ const getPdfMetadata = pdfDoc => ({
     subject: pdfDoc.getSubject(),
     title: pdfDoc.getTitle()
 });
-
-
-handler({source: 'aws.s3', detail: {object: {key: 'AWS_certified_developer_associate_examsample.pdf'}, bucket: {name: 'abc-test-acb'}}});
