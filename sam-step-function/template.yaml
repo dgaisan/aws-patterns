@@ -88,4 +88,9 @@ Resources:
                     - !Ref DocumentBucket
 
 Outputs:
-  
+  OutputBucketName:
+    Description: "Output bucket name"
+    Value: !Ref DocumentBucket
+  DynomoDbTable:
+    Description: "Dynamo table"
+    Value: !Ref DocumentTable
