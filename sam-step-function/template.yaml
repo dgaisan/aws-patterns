@@ -27,24 +27,24 @@ Resources:
         Name: DocumentID
         Type: String
 
-  GetDocumentMetadataFunction:
+  ExtractDocumentMetadataFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: functions/document-metadata/
+      CodeUri: functions/extract-document-metadata/
       Handler: index.handler
 
   GetTextDetectionResultsFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: functions/detection-results/
+      CodeUri: functions/metadata-detection-results/
       Handler: index.handler
       Policies:
         - TextractPolicy: {}
 
-  InsertDocumentFunction:
+  InsertDocumentMetadataIntoDBFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: functions/insert-document/
+      CodeUri: functions/insert-metadata-in-db/
       Handler: index.handler
       Environment:
         Variables:
@@ -59,16 +59,16 @@ Resources:
     Properties:
       DefinitionUri: statemachine/document_processing.asl.json
       DefinitionSubstitutions:
-        GetDocumentMetadataFunctionArn: !GetAtt GetDocumentMetadataFunction.Arn
+        ExtractDocumentMetadataFunctionArn: !GetAtt ExtractDocumentMetadataFunction.Arn
         GetTextDetectionResultsFunctionArn: !GetAtt GetTextDetectionResultsFunction.Arn
-        InsertDocumentFunctionArn: !GetAtt InsertDocumentFunction.Arn
+        InsertDocumentMetadataIntoDBFunctionArn: !GetAtt InsertDocumentMetadataIntoDBFunction.Arn
       Policies:
         - LambdaInvokePolicy:
-            FunctionName: !Ref GetDocumentMetadataFunction
+            FunctionName: !Ref ExtractDocumentMetadataFunction
         - LambdaInvokePolicy:
             FunctionName: !Ref GetTextDetectionResultsFunction
         - LambdaInvokePolicy:
-            FunctionName: !Ref InsertDocumentFunction
+            FunctionName: !Ref InsertDocumentMetadataIntoDBFunction
         - S3CrudPolicy:
             BucketName: 
               !Ref DocumentBucket

@@ -1,10 +1,10 @@
 {
-    "Comment": "A description of my state machine",
+    "Comment": "This state machine is triggered by S3 file upload. It's processing text data, and inserts it into a Dynamo DB",
     "StartAt": "Get Document Metadata",
     "States": {
       "Get Document Metadata": {
         "Type": "Task",
-        "Resource": "${GetDocumentMetadataFunctionArn}",
+        "Resource": "${ExtractDocumentMetadataFunctionArn}",
         "Next": "StartDocumentTextDetection"
       },
       "StartDocumentTextDetection": {
@@ -52,7 +52,7 @@
       },
       "Insert Into DB": {
         "Type": "Task",
-        "Resource": "${InsertDocumentFunctionArn}",
+        "Resource": "${InsertDocumentMetadataIntoDBFunctionArn}",
         "End": true
       }
     }
