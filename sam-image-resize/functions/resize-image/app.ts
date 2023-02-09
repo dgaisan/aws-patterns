@@ -21,23 +21,19 @@ export const lambdaHandler = async (event: S3Event): Promise<APIGatewayProxyResu
     try {
         event.Records.map(async (record) => {
             const { s3 } = record;
-            const file = s3.object.key;
+            const originalFileName = s3.object.key;
+            const originalBucketName = s3.bucket.name;
 
-            const fileFromS3Params = {
-                Bucket: s3.bucket.name,
-                Key: s3.object.key,
+            const tempImagePath = await generateResizedImage(originalBucketName, originalFileName);
+            const resizedFile = await readFileAsync(tempImagePath);
+            const resizedImageFileName = `${originalFileName}-small.jpg`;
+
+            const putFileS3Params = {
+                Bucket: originalBucketName,
+                Key: resizedImageFileName,
+                Body: resizedFile,
             };
-            const fileFromS3 = await s3Client.getObject(fileFromS3Params);
-            const tempImageFile = `${os.tmpdir()}/${crypto.randomUUID()}.jpg`;
-            const imageResizeParams = {
-                srcData: fileFromS3.Body,
-                dstPath: tempImageFile,
-                width: 100, // Resizing original image width to 100px
-            };
-
-            await resizeImageAsync(imageResizeParams);
-
-            const resizedFile = await readFileAsync(tempImageFile);
+            await s3Client.putObject(putFileS3Params);
         });
 
         response = {
@@ -58,3 +54,22 @@ export const lambdaHandler = async (event: S3Event): Promise<APIGatewayProxyResu
 
     return response;
 };
+
+async function generateResizedImage(bucketName: string, fileName: string): Promise<string> {
+    const getFileS3Params = {
+        Bucket: bucketName,
+        Key: fileName,
+    };
+    const fileFromS3 = await s3Client.getObject(getFileS3Params);
+
+    const tempImagePath = `${os.tmpdir()}/${crypto.randomUUID()}.jpg`;
+    const imageResizeParams = {
+        srcData: fileFromS3.Body,
+        dstPath: tempImagePath,
+        width: 100, // Resizing original image width to 100px
+    };
+
+    await resizeImageAsync(imageResizeParams);
+
+    return tempImagePath;
+}
