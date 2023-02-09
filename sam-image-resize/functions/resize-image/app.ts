@@ -1,25 +1,49 @@
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import crypto from 'crypto';
+import fs from 'fs';
+import os from 'os';
+import { S3 } from '@aws-sdk/client-s3';
+import { APIGatewayProxyEvent, APIGatewayProxyResult, S3Event } from 'aws-lambda';
+const im = require('imagemagick');
+const promisify = require('promisify');
 
-/**
- *
- * Event doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-simple-proxy-for-lambda-input-format
- * @param {Object} event - API Gateway Lambda Proxy Input Format
- *
- * Return doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
- * @returns {Object} object - API Gateway Lambda Proxy Output Format
- *
- */
+const resizeImageAsync = promisify(im.resize);
+const readFileAsync = promisify(fs.readFile);
 
-export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+const s3Client = new S3({
+    region: 'us-east-1',
+});
+
+export const lambdaHandler = async (event: S3Event): Promise<APIGatewayProxyResult> => {
     let response: APIGatewayProxyResult;
 
-    console.info('------ Lambda captured file upload event ---------');
+    console.info('------ Lambda captured file(s) upload event ---------');
 
     try {
+        event.Records.map(async (record) => {
+            const { s3 } = record;
+            const file = s3.object.key;
+
+            const fileFromS3Params = {
+                Bucket: s3.bucket.name,
+                Key: s3.object.key,
+            };
+            const fileFromS3 = await s3Client.getObject(fileFromS3Params);
+            const tempImageFile = `${os.tmpdir()}/${crypto.randomUUID()}.jpg`;
+            const imageResizeParams = {
+                srcData: fileFromS3.Body,
+                dstPath: tempImageFile,
+                width: 100, // Resizing original image width to 100px
+            };
+
+            await resizeImageAsync(imageResizeParams);
+
+            const resizedFile = await readFileAsync(tempImageFile);
+        });
+
         response = {
             statusCode: 200,
             body: JSON.stringify({
-                message: 'hello world',
+                message: 'image(s) resizing complete',
             }),
         };
     } catch (err: unknown) {

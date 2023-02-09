@@ -6,7 +6,10 @@
   "author": "SAM CLI",
   "license": "MIT",
   "dependencies": {
-    "esbuild": "^0.14.14"
+    "@aws-sdk/client-s3": "^3.267.0",
+    "esbuild": "^0.14.14",
+    "imagemagick": "^0.1.3",
+    "promisify": "^0.0.3"
   },
   "scripts": {
     "unit": "jest",
