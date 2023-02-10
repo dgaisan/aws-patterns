@@ -2,30 +2,40 @@ import crypto from 'crypto';
 import fs from 'fs';
 import os from 'os';
 import { S3 } from '@aws-sdk/client-s3';
-import { APIGatewayProxyEvent, APIGatewayProxyResult, S3Event } from 'aws-lambda';
-const im = require('imagemagick');
-const promisify = require('promisify');
+import { S3Event } from 'aws-lambda';
+import * as ImageMagick from 'imagemagick';
+const fsPromises = require('fs').promises;
 
-const resizeImageAsync = promisify(im.resize);
-const readFileAsync = promisify(fs.readFile);
+const DONE = 'done.';
+const FAILED = 'failed.';
 
 const s3Client = new S3({
     region: 'us-east-1',
 });
 
-export const lambdaHandler = async (event: S3Event): Promise<APIGatewayProxyResult> => {
-    let response: APIGatewayProxyResult;
+export const lambdaHandler = async (event: S3Event): Promise<string> => {
+    let response: string;
 
     console.info('------ Lambda captured file(s) upload event ---------');
 
+    if (!event || !event.Records || !event.Records.length) {
+        console.error('Required event input is missing');
+        return FAILED;
+    }
+
     try {
-        event.Records.map(async (record) => {
+        for (const record of event.Records) {
             const { s3 } = record;
+
+            if (!s3 || !s3.bucket || !s3.object) {
+                continue;
+            }
+
             const originalFileName = s3.object.key;
             const originalBucketName = s3.bucket.name;
 
             const tempImagePath = await generateResizedImage(originalBucketName, originalFileName);
-            const resizedFile = await readFileAsync(tempImagePath);
+            const resizedFile = await fsPromises.readFile(tempImagePath);
             const resizedImageFileName = `${originalFileName}-small.jpg`;
 
             const putFileS3Params = {
@@ -34,22 +44,12 @@ export const lambdaHandler = async (event: S3Event): Promise<APIGatewayProxyResu
                 Body: resizedFile,
             };
             await s3Client.putObject(putFileS3Params);
-        });
+        }
 
-        response = {
-            statusCode: 200,
-            body: JSON.stringify({
-                message: 'image(s) resizing complete',
-            }),
-        };
+        response = DONE;
     } catch (err: unknown) {
         console.error(err);
-        response = {
-            statusCode: 500,
-            body: JSON.stringify({
-                message: err instanceof Error ? err.message : 'some error happened',
-            }),
-        };
+        response = FAILED;
     }
 
     return response;
@@ -72,4 +72,15 @@ async function generateResizedImage(bucketName: string, fileName: string): Promi
     await resizeImageAsync(imageResizeParams);
 
     return tempImagePath;
+}
+
+function resizeImageAsync(imageResizeParams: any) {
+    return new Promise((resolve, reject) => {
+        ImageMagick.convert(imageResizeParams, (err, stdout) => {
+            if (err) {
+                reject(err);
+            }
+            resolve(stdout);
+        });
+    });
 }

@@ -2,9 +2,9 @@ version = 0.1
 [default]
 [default.deploy]
 [default.deploy.parameters]
-stack_name = "sam-resize-image"
-s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-1ab7w6hl6jqi5"
-s3_prefix = "sam-resize-image"
+stack_name = "sam-image-resize"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-d68puvwir37m"
+s3_prefix = "sam-image-resize"
 region = "us-east-1"
 confirm_changeset = true
 capabilities = "CAPABILITY_IAM"
