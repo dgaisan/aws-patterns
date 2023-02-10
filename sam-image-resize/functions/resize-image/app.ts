@@ -56,6 +56,8 @@ export const lambdaHandler = async (event: S3Event): Promise<string> => {
 };
 
 async function generateResizedImage(bucketName: string, fileName: string): Promise<string> {
+    console.log('--- generateResizedImage --', bucketName, fileName);
+
     const getFileS3Params = {
         Bucket: bucketName,
         Key: fileName,
@@ -63,6 +65,7 @@ async function generateResizedImage(bucketName: string, fileName: string): Promi
     const fileFromS3 = await s3Client.getObject(getFileS3Params);
 
     const tempImagePath = `${os.tmpdir()}/${crypto.randomUUID()}.jpg`;
+    console.log(`--- creating tempfile: ${tempImagePath} --`);
     const imageResizeParams = {
         srcData: fileFromS3.Body,
         dstPath: tempImagePath,
@@ -75,6 +78,7 @@ async function generateResizedImage(bucketName: string, fileName: string): Promi
 }
 
 function resizeImageAsync(imageResizeParams: any) {
+    console.log('--- resizeImageAsync --');
     return new Promise((resolve, reject) => {
         ImageMagick.convert(imageResizeParams, (err, stdout) => {
             if (err) {
