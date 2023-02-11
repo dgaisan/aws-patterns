@@ -1,0 +1,17 @@
+{
+  "name": "put-item",
+  "version": "1.0.0",
+  "description": "Update TODO item",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "axios": ">=0.21.1"
+  },
+  "scripts": {
+    "test": "mocha tests/unit/"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^9.1.4"
+  }
+}
