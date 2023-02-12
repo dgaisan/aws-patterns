@@ -9,9 +9,7 @@ const fsPromises = require('fs').promises;
 const DONE = 'done.';
 const FAILED = 'failed.';
 
-const s3Client = new S3({
-    region: 'us-east-1',
-});
+const s3Client = new S3({});
 
 export const lambdaHandler = async (event: S3Event): Promise<string> => {
     let response: string;
@@ -62,6 +60,7 @@ async function generateResizedImage(bucketName: string, fileName: string): Promi
         Bucket: bucketName,
         Key: fileName,
     };
+
     const fileFromS3 = await s3Client.getObject(getFileS3Params);
 
     const tempImagePath = `${os.tmpdir()}/${crypto.randomUUID()}.jpg`;

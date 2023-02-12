@@ -23,9 +23,7 @@ Resources:
     Properties:
       CodeUri: functions/resize-image
       Handler: app.lambdaHandler
-      Policies:
-        - S3CrudPolicy:
-            BucketName: !Sub "arn:aws:s3:::awesome-bucket-${AWS::AccountId}/*"
+      Policies: AmazonS3FullAccess
       Events:
         FileUpload:
           Type: S3
