@@ -25,7 +25,7 @@ exports.getAllItemsHandler = async (event) => {
 
   console.info("Event received by getAllItemsHandler:", event);
 
-  const response = {};
+  let response = {};
 
   try {
     const params = {
