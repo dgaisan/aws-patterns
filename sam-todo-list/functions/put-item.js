@@ -1,10 +1,15 @@
-const dynamodb = require("aws-sdk/clients/dynamodb");
-const docClient = new dynamodb.DocumentClient();
+const {
+  DynamoDBClient,
+  BatchExecuteStatementCommand,
+} = require("@aws-sdk/client-dynamodb");
+const { DynamoDBDocumentClient, PutCommand } = require("@aws-sdk/lib-dynamodb");
 
-// Get the DynamoDB table name from environment variables
 const tableName = process.env.SAMPLE_TABLE;
 
-exports.putItemHandler = async (event) => {
+const client = new DynamoDBClient({});
+const dynamo = DynamoDBDocumentClient.from(client);
+
+exports.handler = async (event) => {
   if (event.httpMethod !== "POST") {
     throw new Error(
       `postMethod only accepts POST method, you tried: ${event.httpMethod} method.`
@@ -16,7 +21,7 @@ exports.putItemHandler = async (event) => {
   const id = body.id;
   const name = body.name;
 
-  const response = {};
+  let response = {};
 
   try {
     const params = {
@@ -24,7 +29,7 @@ exports.putItemHandler = async (event) => {
       Item: { id: id, name: name },
     };
 
-    await docClient.put(params).promise();
+    await dynamo.send(new PutCommand(params));
 
     response = {
       statusCode: 200,

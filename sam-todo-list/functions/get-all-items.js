@@ -5,25 +5,23 @@ const {
 const {
   DynamoDBDocumentClient,
   ScanCommand,
-  PutCommand,
   GetCommand,
   DeleteCommand,
 } = require("@aws-sdk/lib-dynamodb");
 
+const tableName = process.env.SAMPLE_TABLE;
+
 const client = new DynamoDBClient({});
 const dynamo = DynamoDBDocumentClient.from(client);
 
-/**
- * A simple example includes a HTTP get method to get all items from a DynamoDB table.
- */
-exports.getAllItemsHandler = async (event) => {
+exports.handler = async (event) => {
   if (event.httpMethod !== "GET") {
     throw new Error(
       `getAllItems only accept GET method, you tried: ${event.httpMethod}`
     );
   }
 
-  console.info("Event received by getAllItemsHandler:", event);
+  console.info("Event received by get-all-items.handler:", event);
 
   let response = {};
 
@@ -32,6 +30,7 @@ exports.getAllItemsHandler = async (event) => {
       TableName: tableName,
     };
 
+    console.info(`Starting a scan of ${tableName}`);
     const data = await dynamo.send(new ScanCommand(params));
     const items = data.Items;
 
@@ -39,11 +38,13 @@ exports.getAllItemsHandler = async (event) => {
       statusCode: 200,
       body: JSON.stringify(items),
     };
-  } catch (ResourceNotFoundException) {
+  } catch (resourceNotFoundException) {
     response = {
       statusCode: 404,
       body: "Resource not found in DB.",
     };
+
+    console.error(resourceNotFoundException);
   }
 
   console.info(

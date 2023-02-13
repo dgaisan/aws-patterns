@@ -3,7 +3,7 @@ version = 0.1
 [default.deploy]
 [default.deploy.parameters]
 stack_name = "sam-todo-list-api"
-s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-1l33xzuoj43f8"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-11yt5ssv42cku"
 s3_prefix = "sam-todo-list-api"
 region = "us-east-1"
 confirm_changeset = true
