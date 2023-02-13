@@ -1,8 +1,6 @@
-const {
-  DynamoDBClient,
-  BatchExecuteStatementCommand,
-} = require("@aws-sdk/client-dynamodb");
+const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
 const { DynamoDBDocumentClient, PutCommand } = require("@aws-sdk/lib-dynamodb");
+const crypto = require("crypto");
 
 const tableName = process.env.SAMPLE_TABLE;
 
@@ -12,14 +10,17 @@ const dynamo = DynamoDBDocumentClient.from(client);
 exports.handler = async (event) => {
   if (event.httpMethod !== "POST") {
     throw new Error(
-      `postMethod only accepts POST method, you tried: ${event.httpMethod} method.`
+      `this function only accepts POST method, you tried: ${event.httpMethod} method.`
     );
   }
-  console.info("Event received by putItemHandler:", event);
+  console.info("Event received by put-item");
 
   const body = JSON.parse(event.body);
-  const id = body.id;
+  const id = body.id || crypto.randomUUID();
   const name = body.name;
+
+  console.info("New Item?", body.id ? "yes" : "no");
+  console.info("Item name:", name);
 
   let response = {};
 
@@ -35,10 +36,12 @@ exports.handler = async (event) => {
       statusCode: 200,
       body: JSON.stringify(body),
     };
-  } catch (ResourceNotFoundException) {
+  } catch (resourceNotFoundException) {
+    console.error("-- Error in put-item");
+    console.error(resourceNotFoundException);
     response = {
       statusCode: 404,
-      body: "Unable to call DynamoDB. Table resource not found.",
+      body: "Resource not found in DB.",
     };
   }
 

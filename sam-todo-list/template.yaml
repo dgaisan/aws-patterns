@@ -37,7 +37,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: functions/put-item.handler
-      Description: HTTP get method to update/create TODO item in DynamoDB table.
+      Description: HTTP post method to update/create TODO item in DynamoDB table.
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref DynamoDbTable
@@ -50,6 +50,24 @@ Resources:
           Properties:
             Path: /
             Method: POST
+
+  DeleteItemFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: functions/delete-item.handler
+      Description: HTTP post method to deleting TODO item from DynamoDB table.
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref DynamoDbTable
+      Environment:
+        Variables:
+          SAMPLE_TABLE: !Ref DynamoDbTable
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /
+            Method: DELETE
 
   DynamoDbTable:
     Type: AWS::Serverless::SimpleTable
@@ -69,5 +87,17 @@ Outputs:
     Description: "Get all TODO items Function ARN"
     Value: !GetAtt GetAllItemsFunction.Arn
   GetAllToDoItemsFunctionIamRole:
-    Description: "Implicit IAM Role created for Hello World function"
+    Description: "Implicit IAM Role created for GetAllToDoItemsFunction"
     Value: !GetAtt GetAllItemsFunctionRole.Arn
+  DeleteToDoItemFunction:
+    Description: "Delete TODO item Function ARN"
+    Value: !GetAtt DeleteItemFunction.Arn
+  DeleteToDoItemFunctionIamRole:
+    Description: "Implicit IAM Role created for DeleteItemFunction"
+    Value: !GetAtt DeleteItemFunctionRole.Arn
+  PutToDoItemFunction:
+    Description: "Put TODO item Function ARN"
+    Value: !GetAtt PutItemFunction.Arn
+  PutToDoItemFunctionIamRole:
+    Description: "Implicit IAM Role created for PutItemFunction"
+    Value: !GetAtt PutItemFunctionRole.Arn
