@@ -9,7 +9,7 @@ const tableName = process.env.SAMPLE_TABLE;
 const client = new DynamoDBClient({});
 const dynamo = DynamoDBDocumentClient.from(client);
 
-exports.handler = async (event) => {
+exports.handler = async function (event) {
   if (event.httpMethod !== "DELETE") {
     throw new Error(
       `this function only accepts DELETE method, you tried: ${event.httpMethod} method.`

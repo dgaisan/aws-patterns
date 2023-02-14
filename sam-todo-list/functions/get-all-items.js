@@ -1,11 +1,7 @@
-const {
-  DynamoDBClient,
-  BatchExecuteStatementCommand,
-} = require("@aws-sdk/client-dynamodb");
+const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
 const {
   DynamoDBDocumentClient,
   ScanCommand,
-  GetCommand,
 } = require("@aws-sdk/lib-dynamodb");
 
 const tableName = process.env.SAMPLE_TABLE;
@@ -13,7 +9,7 @@ const tableName = process.env.SAMPLE_TABLE;
 const client = new DynamoDBClient({});
 const dynamo = DynamoDBDocumentClient.from(client);
 
-exports.handler = async (event) => {
+exports.handler = async function (event) {
   if (event.httpMethod !== "GET") {
     throw new Error(
       `getAllItems only accept GET method, you tried: ${event.httpMethod}`

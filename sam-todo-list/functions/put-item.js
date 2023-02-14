@@ -1,13 +1,13 @@
 const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
 const { DynamoDBDocumentClient, PutCommand } = require("@aws-sdk/lib-dynamodb");
-const crypto = require("crypto");
+const { randomUUID } = require("crypto");
 
 const tableName = process.env.SAMPLE_TABLE;
 
 const client = new DynamoDBClient({});
 const dynamo = DynamoDBDocumentClient.from(client);
 
-exports.handler = async (event) => {
+exports.handler = async function (event) {
   if (event.httpMethod !== "POST") {
     throw new Error(
       `this function only accepts POST method, you tried: ${event.httpMethod} method.`
@@ -16,7 +16,7 @@ exports.handler = async (event) => {
   console.info("Event received by put-item");
 
   const body = JSON.parse(event.body);
-  const id = body.id || crypto.randomUUID();
+  const id = body.id || randomUUID();
   const name = body.name;
 
   console.info("New Item?", body.id ? "yes" : "no");
