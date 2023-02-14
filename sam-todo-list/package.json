@@ -13,6 +13,9 @@
     "mocha": "^9.1.4"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "samTestGetAllItems": "sam local invoke GetAllItemsFunction --event events/get-all-items.json",
+    "samTestPutItem": "sam local invoke PutItemFunction --event events/put-item.json",
+    "samTestDeleteItem": "sam local invoke DeleteItemFunction --event events/delete-item.json"
   }
 }
