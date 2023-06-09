@@ -1,32 +1,39 @@
-import { aws_cognito as cognito, CfnResource, Stack } from "aws-cdk-lib";
+import {
+  aws_iam as iam,
+  aws_cognito as cognito,
+  CfnResource,
+  Stack,
+  CfnOutput,
+} from "aws-cdk-lib";
 import { Construct } from "constructs";
-require('dotenv').config();
-
+require("dotenv").config();
 
 const AUTH0_CLIENT_ID: string = process.env.AUTH0_CLIENT_ID || "";
 const AUTH0_DOMAIN: string = process.env.AUTH0_DOMAIN || "";
 
 export class CongnitoStack extends Stack {
+  public readonly identityPool: cognito.CfnIdentityPool;
+
   constructor(scope: Construct, id: string) {
     super(scope, id);
 
-    const userPool = new cognito.UserPool(this, 'UserPool', {
-      userPoolName: 'MyUserPool',
-      selfSignUpEnabled: true,
+    const provider = new iam.OpenIdConnectProvider(this, "Auth0Provider", {
+      url: AUTH0_DOMAIN,
+      clientIds: [AUTH0_CLIENT_ID]
     });
 
-    const identityPool = new cognito.CfnIdentityPool(this, 'auth0-identity-pool', {
-      allowUnauthenticatedIdentities: false,
-      cognitoIdentityProviders: [
-        {
-          clientId: AUTH0_CLIENT_ID,
-          providerName: AUTH0_DOMAIN,
-          serverSideTokenCheck: false,
-        },
-      ],
-      identityPoolName: "auth0-identity-pool",
-    });
+    this.identityPool = new cognito.CfnIdentityPool(
+      this,
+      "auth0-identity-pool",
+      {
+        identityPoolName: "auth0-identity-pool",
+        allowUnauthenticatedIdentities: true,
+        openIdConnectProviderArns: [provider.openIdConnectProviderArn],
+      }
+    );
 
-    identityPool.addDependency(userPool.node.defaultChild as CfnResource);
+    new CfnOutput(this, "identityPoolId", {
+      value: this.identityPool.ref,
+    });
   }
 }

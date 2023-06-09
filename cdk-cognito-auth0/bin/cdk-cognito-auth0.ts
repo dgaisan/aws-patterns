@@ -4,7 +4,7 @@ import * as cdk from 'aws-cdk-lib';
 import { CdkCognitoAuth0Stack } from '../lib/cdk-cognito-auth0-stack';
 
 const app = new cdk.App();
-new CdkCognitoAuth0Stack(app, 'CdkCognitoAuth0Stack', {
+new CdkCognitoAuth0Stack(app, 'CdkCognitoAuth0StackDev', {
   /* If you don't specify 'env', this stack will be environment-agnostic.
    * Account/Region-dependent features and context lookups will not work,
    * but a single synthesized template can be deployed anywhere. */
@@ -19,4 +19,3 @@ new CdkCognitoAuth0Stack(app, 'CdkCognitoAuth0Stack', {
 
   /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
 });
-app.synth();
