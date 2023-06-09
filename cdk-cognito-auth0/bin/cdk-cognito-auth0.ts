@@ -19,3 +19,4 @@ new CdkCognitoAuth0Stack(app, 'CdkCognitoAuth0Stack', {
 
   /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
 });
+app.synth();
