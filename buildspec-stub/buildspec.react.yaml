@@ -1,0 +1,20 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 16
+   
+    commands:
+        - npm install
+       
+  build:
+    commands:
+        - npm run-script build
+     
+artifacts:
+  files:
+    - public/**/*
+    - src/**/*
+    - package.json
+    - scripts/**/*
