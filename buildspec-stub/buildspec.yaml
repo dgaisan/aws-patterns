@@ -1,0 +1,69 @@
+version: 0.2
+
+run-as: Linux-user-name
+
+env:
+  variables:
+    AWS_DEFAULT_REGION: "us-east-1"
+  parameter-store:
+    key: "value"
+  secrets-manager:
+    key: secret-id:json-key:version-stage:version-id
+  git-credential-helper: yes
+
+proxy:
+  upload-artifacts: yes
+  logs: yes
+
+phases:
+  install:
+    run-as: Linux-user-name
+    runtime-versions:
+      runtime: version
+    commands:
+      - command
+    finally:
+      - command
+  pre_build:
+    run-as: Linux-user-name
+    commands:
+      - command
+    finally:
+      - command
+  build:
+    run-as: Linux-user-name
+    commands:
+      - command
+    finally:
+      - command
+  post_build:
+    run-as: Linux-user-name
+    commands:
+      - command
+    finally:
+      - command
+artifacts:
+  files:
+    - location
+  name: artifact-name
+  discard-paths: yes
+  base-directory: location
+  s3-prefix: prefix
+  secondary-artifacts:
+    artifactIdentifier:
+      files:
+        - location
+        - location
+      name: secondary-artifact-name
+      discard-paths: yes
+      base-directory: location
+    artifactIdentifier:
+      files:
+        - location
+        - location
+      discard-paths: yes
+      base-directory: location
+cache:
+  paths:
+    - path
+    - path
