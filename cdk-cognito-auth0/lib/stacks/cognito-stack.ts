@@ -1,15 +1,11 @@
 import {
   aws_iam as iam,
   aws_cognito as cognito,
-  CfnResource,
   Stack,
   CfnOutput,
 } from "aws-cdk-lib";
 import { Construct } from "constructs";
-require("dotenv").config();
-
-const AUTH0_CLIENT_ID: string = process.env.AUTH0_CLIENT_ID || "";
-const AUTH0_DOMAIN: string = process.env.AUTH0_DOMAIN || "";
+import config from "./../config";
 
 export class CongnitoStack extends Stack {
   public readonly identityPool: cognito.CfnIdentityPool;
@@ -18,8 +14,8 @@ export class CongnitoStack extends Stack {
     super(scope, id);
 
     const provider = new iam.OpenIdConnectProvider(this, "Auth0Provider", {
-      url: AUTH0_DOMAIN,
-      clientIds: [AUTH0_CLIENT_ID]
+      url: config.auth0Domain,
+      clientIds: [config.auth0ClientId],
     });
 
     this.identityPool = new cognito.CfnIdentityPool(
