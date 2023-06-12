@@ -82,7 +82,7 @@ export class CongnitoStack extends Stack {
       {
         identityPoolId: this.identityPool.ref,
         roles: {
-          authentiawscated: this.authenticatedUserGroupRole.roleArn,
+          authenticated: this.authenticatedUserGroupRole.roleArn,
           unauthenticated: this.unauthenticatedUserGroupRole.roleArn,
         },
       }
