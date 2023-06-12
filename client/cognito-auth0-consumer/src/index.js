@@ -8,13 +8,16 @@ import { readConfig } from "./config";
 
 const config = readConfig();
 const providerConfig = {
-  clientId: config.auth0Client,
-  domain: config.auth0Domain
+  clientId: config.auth0ClientId,
+  domain: config.auth0Domain,
+  redirectUri: window.location.origin
 };
+
+console.log(providerConfig);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <Auth0Provider  {...providerConfig}>
+  <Auth0Provider  {...providerConfig} >
     <App />
   </Auth0Provider>
 );

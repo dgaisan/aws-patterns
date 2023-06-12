@@ -13,8 +13,14 @@ Amplify.configure({
   },
 });
 
+console.log(config);
+
 function App() {
-  const { isAuthenticated, loginWithRedirect, getIdTokenClaims } = useAuth0();
+  const { isAuthenticated, loginWithRedirect, getIdTokenClaims, user } = useAuth0();
+
+  console.log('------Re-rendering <App>')
+  console.log({user});
+  console.log({isAuthenticated})
 
   useEffect(() => {
     const fetchAccessToken = async () => {

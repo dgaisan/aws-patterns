@@ -38,6 +38,12 @@
     ]
   },
   "react-dotenv": {
-    "whitelist": ["AUTH0_CLIENT_ID", "AUTH0_DOMAIN", "IDENTITY_POOL_ID", "IDENTITY_POOL_REGION"]
+    "whitelist": [
+      "AUTH0_CLIENT_ID",
+      "AUTH0_DOMAIN",
+      "AUTH0_PROVIDER",
+      "IDENTITY_POOL_ID",
+      "IDENTITY_POOL_REGION"
+    ]
   }
 }
