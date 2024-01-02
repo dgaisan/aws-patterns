@@ -1,6 +1,6 @@
-# sam-step-function
+# step-function template
 State machine built using SAM toolkit. The state machine is triggered by S3 (drop of a file into a bucket).
-File is processed by AWS Textract to extract data/text. Results are saved in DynamoDB. 
+File is processed by AWS Textract to extract data/text. Results are saved into DynamoDB. 
 
 
 ## Deploy the application
