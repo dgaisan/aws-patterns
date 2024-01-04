@@ -1,6 +1,6 @@
-# Welcome to your CDK TypeScript project
+# TODO List using GraphQL & DynamoDB
 
-This is a blank project for CDK development with TypeScript.
+## App execution using CDK 
 
 The `cdk.json` file tells the CDK Toolkit how to execute your app.
 
