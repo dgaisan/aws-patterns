@@ -1,4 +1,4 @@
-# sam-todo-list
+# Serverless todo-list
 
 This is a backend/api for Todo List app. This app is built using AWS serverless application. It can deploy with the SAM CLI.
 AWS resources are defined in the `template.yaml`.
