@@ -34,6 +34,7 @@ Once the virtualenv is activated, you can install the required dependencies.
 
 ```
 $ pip install -r requirements.txt
+$ pip install -r requirements-dev.txt (for testing purposes)
 ```
 
 At this point you can now synthesize the CloudFormation template for this code.
@@ -64,10 +65,18 @@ command.
 When initializing environment for the first time run `cdk bootstrap`. 
 
 # AWS SAM
-Before running any of testing commands make sure to start up Docker service/daemon
+1. Before running any of testing commands make sure to start up Docker service/daemon
+2. Start up localstack `localstack start`
+3. create a topic in SNS
 
 To test producer_lambda run following command:
 
 ```
 sam local invoke producer-lambda --no-event -t cdk.out/FunctionTemplatePyStack.template.json
+```
+
+Test producer-lambda passing inline event:
+
+```
+echo '{"payload": "some message" }' | sam local invoke producer-lambda --event - -t cdk.out/FunctionTemplatePyStack.template.json
 ```

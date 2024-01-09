@@ -35,7 +35,12 @@ class FunctionTemplatePyStack(Stack):
             handler="producer_template.handler",
             runtime=function.Runtime.PYTHON_3_8,
             timeout=Duration.minutes(3),
-            role=lambda_role
+            role=lambda_role,
+            environment={
+                "SNS_TOPIC_ARN": topic.topic_arn,
+                "SQS_URL": queue.queue_url,
+                "LOCALSTACK_ENDPOINT": ""
+            }
         )
 
         queue.grant_send_messages(producer_function)
