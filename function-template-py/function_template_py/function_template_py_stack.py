@@ -26,7 +26,7 @@ class FunctionTemplatePyStack(Stack):
             self, "FunctionTemplatePyTopic"
         )
 
-        lambda_role = iam.Role(self, "LambdaRole", assumed_by=iam.ServicePrincipal("lambda.amazonaws.com"))
+        # producer_function_role = iam.Role(self, "producer_function_role", assumed_by=iam.ServicePrincipal("lambda.amazonaws.com"))
 
         # Producer Lambda
         producer_function = function.Function(
@@ -36,7 +36,6 @@ class FunctionTemplatePyStack(Stack):
             handler="producer_template.handler",
             runtime=function.Runtime.PYTHON_3_8,
             timeout=Duration.minutes(3),
-            role=lambda_role,
             environment={
                 "SNS_TOPIC_ARN": topic.topic_arn,
                 "SQS_URL": queue.queue_url,
@@ -55,7 +54,6 @@ class FunctionTemplatePyStack(Stack):
             handler="subscriber_template.handler",
             runtime=function.Runtime.PYTHON_3_8,
             timeout=Duration.minutes(3),
-            role=lambda_role,
             environment={
                 "SNS_TOPIC_ARN": topic.topic_arn
             }
@@ -63,22 +61,25 @@ class FunctionTemplatePyStack(Stack):
 
         topic.add_subscription(subs.LambdaSubscription(subscriber_function))
 
+        # subscriber_function.add_to_role_policy(
+        #     iam.PolicyStatement(
+        #         actions=["logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents"],
+        #         resources=[f"arn:aws:logs:{self.region}:{self.account}:log-group:/aws/lambda/{subscriber_function.function_name}"]
+        #     )
+        # )
+
         # SQS consumer lambda
-        consumer_lambda = function.Function(
+        consumer_function = function.Function(
             self, "consumer_lambda",
             function_name="consumer_lambda",
             code=function.Code.from_asset("lambdas"),
             handler="consumer_template.handler",
             runtime=function.Runtime.PYTHON_3_8,
             timeout=Duration.minutes(3),
-            role=lambda_role,
             environment={
                 "SQS_URL": queue.queue_url,
             }
         )
 
-        queue.grant_consume_messages(consumer_lambda)
-
-
-
+        queue.grant_consume_messages(consumer_function)
         
