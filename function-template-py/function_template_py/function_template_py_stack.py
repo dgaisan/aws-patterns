@@ -27,11 +27,12 @@ class FunctionTemplatePyStack(Stack):
         )
 
         lambda_role = iam.Role(self, "LambdaRole", assumed_by=iam.ServicePrincipal("lambda.amazonaws.com"))
-        # lambda_role.add_managed_policy(iam.ManagedPolicy.from_aws_managed_policy_name("ReadOnly"))
+
+        # Producer Lambda
         producer_function = function.Function(
-            self, "function-template-py",
+            self, "producer-lambda",
             function_name="producer-lambda",
-            code=function.Code.from_asset("lambda_code"),
+            code=function.Code.from_asset("lambdas"),
             handler="producer_template.handler",
             runtime=function.Runtime.PYTHON_3_8,
             timeout=Duration.minutes(3),
@@ -45,3 +46,23 @@ class FunctionTemplatePyStack(Stack):
 
         queue.grant_send_messages(producer_function)
         topic.grant_publish(producer_function)
+
+        # SNS subscriber lambda
+        subscriber_function = function.Function(
+            self, "subscriber_lambda",
+            function_name="subscriber_lambda",
+            code=function.Code.from_asset("lambdas"),
+            handler="subscriber_template.handler",
+            runtime=function.Runtime.PYTHON_3_8,
+            timeout=Duration.minutes(3),
+            role=lambda_role,
+            environment={
+                "SNS_TOPIC_ARN": topic.topic_arn
+            }
+        )
+
+        topic.add_subscription(subs.LambdaSubscription(subscriber_function))
+
+
+
+        

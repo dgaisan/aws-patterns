@@ -65,11 +65,20 @@ command.
 When initializing environment for the first time run `cdk bootstrap`. 
 
 # AWS SAM
-1. Before running any of testing commands make sure to start up Docker service/daemon
-2. Start up localstack `localstack start`
-3. create a topic in SNS
+- Before running any of testing commands make sure to start up Docker service/daemon
+- Install AWS SAM CLI
 
-To test producer_lambda run following command:
+### Subscriber Lambda
+
+```
+sam local invoke subscriber_lambda --event tests/sns_event.json -t cdk.out/FunctionTemplatePyStack.template.json
+```
+
+### Producer Lambda
+Producer Lambda has SNS and SQS dependencies therefore there's an additional setup to test it out
+One option is to use localstack
+1. Start up localstack `localstack start`
+2. create a topic in localstack SNS
 
 ```
 sam local invoke producer-lambda --no-event -t cdk.out/FunctionTemplatePyStack.template.json
