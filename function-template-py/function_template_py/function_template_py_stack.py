@@ -63,6 +63,22 @@ class FunctionTemplatePyStack(Stack):
 
         topic.add_subscription(subs.LambdaSubscription(subscriber_function))
 
+        # SQS consumer lambda
+        consumer_lambda = function.Function(
+            self, "consumer_lambda",
+            function_name="consumer_lambda",
+            code=function.Code.from_asset("lambdas"),
+            handler="consumer_template.handler",
+            runtime=function.Runtime.PYTHON_3_8,
+            timeout=Duration.minutes(3),
+            role=lambda_role,
+            environment={
+                "SQS_URL": queue.queue_url,
+            }
+        )
+
+        queue.grant_consume_messages(consumer_lambda)
+
 
 
         

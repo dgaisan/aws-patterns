@@ -62,7 +62,9 @@ command.
  * `cdk diff`        compare deployed stack with current state
  * `cdk docs`        open CDK documentation
 
-When initializing environment for the first time run `cdk bootstrap`. 
+When initializing environment for the first time run `cdk bootstrap`.
+Run `cdk synth` each time a new construct is introduced
+Run `cdk deploy` to deploy stack into AWS
 
 # AWS SAM
 - Before running any of testing commands make sure to start up Docker service/daemon
@@ -72,6 +74,12 @@ When initializing environment for the first time run `cdk bootstrap`.
 
 ```
 sam local invoke subscriber_lambda --event tests/sns_event.json -t cdk.out/FunctionTemplatePyStack.template.json
+```
+
+### Consumer Lambda
+
+```
+sam local invoke consumer_lambda --event tests/sqs_event.json -t cdk.out/FunctionTemplatePyStack.template.json
 ```
 
 ### Producer Lambda
