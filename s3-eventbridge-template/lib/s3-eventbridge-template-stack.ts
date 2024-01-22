@@ -1,4 +1,4 @@
-import { CfnOutput, Duration, Stack, StackProps } from "aws-cdk-lib";
+import { CfnOutput, Duration, RemovalPolicy, Stack, StackProps } from "aws-cdk-lib";
 import * as s3 from "aws-cdk-lib/aws-s3";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as events from "aws-cdk-lib/aws-events";
@@ -10,10 +10,12 @@ export class S3EventbridgeTemplateStack extends Stack {
     super(scope, id, props);
 
     const s3Bucket = new s3.Bucket(this, "S3EventbridgeTemplateStack-bucket-01", {
-      eventBridgeEnabled: true
+      eventBridgeEnabled: true,
+      removalPolicy: RemovalPolicy.RETAIN,
     });
 
     const fn = new lambda.Function(this, "S3EventbridgeTemplate-function", {
+      functionName: "LogEvent-Function",
       code: lambda.AssetCode.fromAsset("lambdas"),
       runtime: lambda.Runtime.NODEJS_20_X,
       handler: "LogEvent.handler",
@@ -36,6 +38,8 @@ export class S3EventbridgeTemplateStack extends Stack {
       retryAttempts: 2,
       maxEventAge: Duration.hours(1)
     }))
+
+    targets.addLambdaPermission(eventRule, fn);
 
     new CfnOutput(this, "S3 Bucket", {value: s3Bucket.bucketName});
     new CfnOutput(this, "Event ARN", {value: eventRule.ruleArn});
