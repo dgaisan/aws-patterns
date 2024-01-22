@@ -13,4 +13,5 @@ test('S3 Bucket, Lambda Function, and Event Rule are created', () => {
   template.hasResourceProperties('AWS::S3::Bucket', {});
   template.hasResourceProperties('AWS::Lambda::Function', {});
   template.hasResourceProperties('AWS::Events::Rule', {});
+  template.hasResourceProperties('AWS::SQS::Queue', {});
 });

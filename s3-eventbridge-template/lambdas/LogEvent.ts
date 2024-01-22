@@ -6,7 +6,7 @@ export const handler: Handler = (event = {}) => {
     console.log(JSON.stringify(event));
 
     return {
-        status: "OK",
+        statusCode: 200,
         body: "Event has been logged"
     };
 } 
