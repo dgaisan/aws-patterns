@@ -1,4 +1,7 @@
-# S3 sends and event to EventBridge on object upload. EventBridge triggers lambda
+# EventBridge triggers lambda on S3 file upload
+
+S3 -> EventBridge -> Lambda
+
 
 ## build commands
 
