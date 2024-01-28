@@ -1,4 +1,4 @@
-# Template python project using AWS CDK to define infrastructure and AWS SAM for testing functions. 
+## Template python project using AWS CDK to define infrastructure and AWS SAM for testing functions. 
 
 
 ## Aws CDK
@@ -54,7 +54,7 @@ To add additional dependencies, for example other CDK libraries, just add to
 your requirements.txt file and rerun the `pip install -r requirements.txt`
 command.
 
-## Useful commands
+### Useful commands
 
  * `cdk ls`          list all stacks in the app
  * `cdk synth`       emits the synthesized CloudFormation template
@@ -66,7 +66,7 @@ When initializing environment for the first time run `cdk bootstrap`.
 Run `cdk synth` each time a new construct is introduced
 Run `cdk deploy` to deploy stack into AWS
 
-# AWS SAM
+## AWS SAM
 - Before running any of testing commands make sure to start up Docker service/daemon
 - Install AWS SAM CLI
 
