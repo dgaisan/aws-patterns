@@ -1,7 +1,7 @@
-This is template python project using AWS CDK to define infrastructure and AWS SAM for testing functions. 
+# Template python project using AWS CDK to define infrastructure and AWS SAM for testing functions. 
 
 
-# AWS CDK
+## Aws CDK
 
 The `cdk.json` file tells the CDK Toolkit how to execute your app.
 
