@@ -26,8 +26,7 @@ export class S3EventbridgeTemplateStack extends Stack {
       timeout: Duration.seconds(20)
     });
 
-    const eventRule = new events.Rule(this, 'Event Rule', {
-
+    const patternEventRule = new events.Rule(this, 'Pattern Event Rule', {
       eventPattern: {
         source: ["aws.s3"],
         detailType: ["New Object"],
@@ -38,16 +37,22 @@ export class S3EventbridgeTemplateStack extends Stack {
         }
       }
     });
-    eventRule.addTarget(new targets.LambdaFunction(fn, {
+    patternEventRule.addTarget(new targets.LambdaFunction(fn, {
       retryAttempts: 2,
       maxEventAge: Duration.hours(1),
       deadLetterQueue
     }))
 
-    targets.addLambdaPermission(eventRule, fn);
+    targets.addLambdaPermission(patternEventRule, fn);
+
+    const scheduledEventRule = new events.Rule(this, 'Scheduled event Rule', {
+      schedule: {
+
+      }
+    });
 
     new CfnOutput(this, "S3 Bucket", {value: s3Bucket.bucketName});
-    new CfnOutput(this, "Event ARN", {value: eventRule.ruleArn});
+    new CfnOutput(this, "Event ARN", {value: patternEventRule.ruleArn});
     new CfnOutput(this, "Lambda Function", {value: fn.functionName});
 
   }
