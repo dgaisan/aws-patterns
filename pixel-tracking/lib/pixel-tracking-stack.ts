@@ -1,6 +1,9 @@
 import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
 import * as lambda from "aws-cdk-lib/aws-lambda";
+import * as apigateway from "aws-cdk-lib/aws-apigateway";
+import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
+
 
 export class PixelTrackingStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -14,7 +17,6 @@ export class PixelTrackingStack extends cdk.Stack {
       }
     );
 
-    // Init lambda
     const trackingFunction = new lambda.Function(this, "TrackingFunction", {
       code: lambda.AssetCode.fromAsset("functions"),
       handler: "track.handler",
@@ -26,8 +28,19 @@ export class PixelTrackingStack extends cdk.Stack {
       }
     });
 
-    // init Apigw and wrire to the lambda
+    const api = new apigateway.RestApi(this, 'PixelTrackingApi', {
+      restApiName: 'Pixel Tracking API',
+      description: 'API for tracking pixel hits',
+    });
 
-    // create dynamo table
+    const resource = api.root.addResource('trackpixel');
+    const lambdaIntegration = new apigateway.LambdaIntegration(trackingFunction);
+    resource.addMethod('GET', lambdaIntegration);
+
+    const trackingTable = new dynamodb.Table(this, 'TrackingTable', {
+      partitionKey: { name: 'trackingId', type: dynamodb.AttributeType.STRING },
+      removalPolicy: cdk.RemovalPolicy.DESTROY, // change to something else in prod
+    });
+    trackingTable.grantReadWriteData(trackingFunction);
   }
 }
