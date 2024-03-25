@@ -2,7 +2,7 @@
 Basic pixel tracking service to enable analytics. 
 - Serves a pixel (1x1 png)
 - Any client loading this image will trigger lambda to handle a request and thefore collect some anaytics from a client
-- * very simple setup: no CDN, no reverse-proxy + logs  
+- *very simple setup: no CDN, no reverse-proxy + logs  
 
 ### setup
 * after cloning the repo, run `npm install`
