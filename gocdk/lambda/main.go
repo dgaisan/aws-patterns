@@ -7,7 +7,7 @@ import (
 )
 
 type UserEvent struct {
-	Username string
+	Username string `json:"username"`
 }
 
 func HandleRequest(event UserEvent) (string, error) {
