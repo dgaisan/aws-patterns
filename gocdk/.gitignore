@@ -5,7 +5,9 @@
 *.so
 *.dylib
 *.zip
+
 lambda/function.zip
+lambda/bootstrap
 
 # Test binary, built with `go test -c`
 *.test
