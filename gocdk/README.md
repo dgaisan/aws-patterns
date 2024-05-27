@@ -3,7 +3,9 @@
 ## Before deploying lambda
  * `GOOS=linux GOARCH=amd64 go build -o bootstrap`  Creates linux executable as required by runtime:
  * `zip function.zip bootstrap`                     Creates zip bootstrap file
- * `cdk bootstrap`                                  Init AWS env. has to be executed only once on very first deployment
+ 
+## Before very first deploy (need to run only once)
+* `cdk bootstrap`   Init AWS environment
 
 ## Deployment commands
  * `cdk deploy`         deploy this stack to your default AWS account/region
