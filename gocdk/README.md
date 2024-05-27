@@ -1,12 +1,12 @@
-# Welcome to your CDK Go project!
+# CDK Go template
 
-This is a blank project for CDK development with Go.
+## Before deploying lambda
+ * `GOOS=linux GOARCH=amd64 go build -o bootstrap`  Creates linux executable as required by runtime:
+ * `zip function.zip bootstrap`                     Creates zip bootstrap file
+ * `cdk bootstrap`                                  Init AWS env. has to be executed only once on very first deployment
 
-The `cdk.json` file tells the CDK toolkit how to execute your app.
+## Deployment commands
+ * `cdk deploy`         deploy this stack to your default AWS account/region
 
-## Useful commands
-
- * `cdk deploy`      deploy this stack to your default AWS account/region
- * `cdk diff`        compare deployed stack with current state
- * `cdk synth`       emits the synthesized CloudFormation template
- * `go test`         run unit tests
+## Other useful commands
+ * `cdk diff`           Display changes in the current stack (Won't deploy anything. Will show what you're about to deploy)
