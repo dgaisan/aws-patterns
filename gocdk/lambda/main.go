@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 )
 
@@ -10,12 +11,23 @@ type UserEvent struct {
 	Username string `json:"username"`
 }
 
-func HandleRequest(event UserEvent) (string, error) {
-	if event.Username == "" {
-		return "", fmt.Errorf("username is required")
+func HandleRequest(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	switch request.HTTPMethod {
+	case "GET":
+		return handleGet(request)
+	default:
+		return events.APIGatewayProxyResponse{
+			StatusCode: 405,
+			Body:       "Unsupported method",
+		}, fmt.Errorf("unsupported method %s", request.HTTPMethod)
 	}
+}
 
-	return fmt.Sprintf("Invoked by %s", event.Username), nil
+func handleGet(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	return events.APIGatewayProxyResponse{
+		Body:       "GET Successful",
+		StatusCode: 200,
+	}, nil
 }
 
 func main() {
